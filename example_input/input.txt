@@ -1,0 +1,26 @@
+#group : 10
+#title : Swe: blatt 08
+
+Projektmanagent
+  blabla
+    10 Mal eine etwas längere Zeit, wie auch immer... odern och länger, wie auch immer..
+    10 blbbbbbbabla
+    10 blbbbbbbabla
+    10 blbbbbbbabla
+  10  Konstruktor angelegt und überprüft
+  10  blabla
+Projektmanagent
+  blabla
+    10 blabla
+  10  Konstruktor angelegt und überprüft
+  10  blabla
+Projektmanagent
+  blabla
+    10 blabla
+  10  Konstruktor angelegt und überprüft
+  10  blabla
+Projektmanagent
+  blabla
+    10 blabla
+  10  Konstruktor angelegt und überprüft
+  10  blabla

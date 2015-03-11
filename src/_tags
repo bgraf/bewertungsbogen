@@ -1,0 +1,5 @@
+true: package(batteries, tyxml)
+<output.ml>: package(tyxml, tyxml.syntax), syntax(camlp4o)
+true: package(cmdliner)
+true: use_menhir
+true: debug,thread
