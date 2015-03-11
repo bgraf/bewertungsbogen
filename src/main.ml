@@ -76,6 +76,19 @@ let parse_file ~file =
   (tasks, title, groups)
 
 
+(** [output_filename path] extracts the filename from a path and
+    appends ".pdf" to it. *)
+let output_filename name =
+  let prefix =
+    try
+      let index = String.rindex name '/' in
+      let len = String.length name in
+      String.sub name (index + 1) (len - index - 1)
+    with _ -> name
+  in
+  prefix ^ ".pdf"
+
+
 let main file =
   try
     let tasks, title, groups = parse_file ~file in
@@ -87,7 +100,7 @@ let main file =
       end)
     in
 
-    let output_filename = file ^ ".pdf" in
+    let output_filename = output_filename file in
 
     let wk_stdin =
       Unix.open_process_out
@@ -96,8 +109,12 @@ let main file =
     H.show ~f:(fun s -> Printf.fprintf wk_stdin "%s" s) tasks;
 
     match Unix.close_process_out wk_stdin with
-    | Unix.WEXITED i when i == 127 -> exit_error "Error while running `wkhtmltopdf`."
-    | _ -> `Ok (Printf.printf "Created file '%s'\n" output_filename)
+    | Unix.WEXITED i when i == 127 ->
+      exit_error "Error while running `wkhtmltopdf`."
+    | Unix.WEXITED i when i == 0 ->
+      `Ok (Printf.printf "Created file '%s'\n" output_filename)
+    | _ ->
+      exit_error "Error while running `wkhtmltopdf`."
   with
   | Failure s -> `Error (true, s)
 
@@ -106,12 +123,10 @@ let main file =
 open Cmdliner
 
 let make_cmdline () =
-
   let file_arg = 
     let doc = "Input source file." in
     Arg.(required & pos 0 (some file) None & info [] ~docv:"SOURCE" ~doc)
   in
-
   let cmd =
     let doc = "Bewertungsbogen generator" in
     let man = [] in
@@ -119,7 +134,6 @@ let make_cmdline () =
     Term.info "bewertungsbogen" ~man ~doc ~version:"0.0.1-alpha"
   in
   cmd
-
 
 let () =
   let cmdline = make_cmdline () in
