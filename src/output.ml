@@ -119,6 +119,15 @@ module Show(C : Config) = struct
       </tr>
     >>
 
+  let final_score_row ~score =
+    <:html5<
+      <tr class="score">
+        <td><b>Gesamt</b></td>
+        <td class="points">$str: score |> string_of_int$</td>
+        $list: group_cells$
+      </tr>
+    >>
+
   let class_for_level = function
     | n when n < 2 -> "level" ^ (string_of_int n)
     | _ -> "levelN"
@@ -205,7 +214,7 @@ module Show(C : Config) = struct
           <table>
             $table_heading$
             $list: rows$
-            $score_row ~info:"Gesamt" ()$
+            $final_score_row ~score:(tasks |> List.map Task.points |> List.fold_left (+) 0)$
           </table>
         </body>
       </html>
