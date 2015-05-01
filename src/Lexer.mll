@@ -52,7 +52,7 @@ let digit = ['0'-'9']
 let white    = [' ' '\t']
 let alpha    = ['A'-'Z' 'a'-'z']
 let newline  = ['\n']
-let number   = ['1'-'9'] digit*
+let number   = digit+
 
 rule lex s = parse
   | white* newline  { State.look_on s; lex s lexbuf }
