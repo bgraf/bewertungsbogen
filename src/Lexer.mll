@@ -44,6 +44,13 @@ type token =
 let decrease_current_position lb =
   Lexing.(lb.lex_curr_pos <- lb.lex_curr_pos - 1)
 
+(** [increase_linenum lexbuf] will increase [lexbuf]'s line number
+    by one. *)
+let increase_linenum lb = Lexing.(
+  let currpos = lb.lex_curr_p in
+  let updated = { currpos with pos_lnum = currpos.pos_lnum + 1 } in
+  lb.lex_curr_p <- updated)
+
 }
 
 (*---------------------------------------------------------------------------*)
@@ -55,7 +62,7 @@ let newline  = ['\n']
 let number   = digit+
 
 rule lex s = parse
-  | white* newline  { State.look_on s; lex s lexbuf }
+  | white* newline  { State.look_on s; increase_linenum lexbuf; lex s lexbuf }
   | white white
     { (* leading whitespace pair, handle possible indent *)
       State.current_increase s;

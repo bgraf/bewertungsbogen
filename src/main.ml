@@ -24,7 +24,14 @@ let parse_input inp =
     Ok (Parser.specification lexfun lexbuf)
   with
   | Parser.Error -> Bad("some error")
-  | Failure s -> Bad(s)
+  | Failure s -> begin
+      let curr = lexbuf.Lexing.lex_curr_p in
+      let line = curr.Lexing.pos_lnum in
+      let cnum = curr.Lexing.pos_bol in
+      let tok = Lexing.lexeme lexbuf in
+      let msg = Printf.sprintf "%s at line %d:%d, token: '%s'" s line cnum tok in
+      Bad(msg)
+    end
 
 (*---------------------------------------------------------------------------*)
 
@@ -54,7 +61,7 @@ end
 (*---------------------------------------------------------------------------*)
 
 let exit_error msg =
-  sprintf "SOURCE-ERROR => %s\n" msg |> failwith
+  sprintf "Error: %s\n" msg |> failwith
 
 
 let parse_file ~file =
