@@ -1,0 +1,17 @@
+OASISFormat: 0.4
+Name:        bewertungsbogen
+Version:     0.1.0
+Synopsis:    Generates evaluation sheets from a text specification
+Authors:     Benjamin Graf
+License:     MIT
+Plugins:     DevFiles (0.4)
+
+Executable bewertungsbogen
+  Path:       src
+  BuildTools: ocamlbuild
+  MainIs:     main.ml
+  BuildDepends:
+    batteries,
+    cmdliner,
+    tyxml,
+    tyxml.syntax
