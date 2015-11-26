@@ -9,3 +9,12 @@
 *.cmxa
 .tags
 *.swp
+setup.ml
+setup.data
+setup.log
+myocamlbuild.ml
+configure
+Makefile
+_build
+main.byte
+main.native

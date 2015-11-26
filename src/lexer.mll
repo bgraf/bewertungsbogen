@@ -24,18 +24,7 @@ end
 
 (*---------------------------------------------------------------------------*)
 
-type info = {
-  key: string;
-  value: string
-}
-
-type token =
-  | EOF
-  | DATA of string
-  | NUMBER of int
-  | INDENT
-  | DEDENT
-  | INFO of info
+open Parser
 
 (*---------------------------------------------------------------------------*)
 
@@ -104,7 +93,7 @@ and lex_content s = parse
   | white* newline { State.look_on s; lex s lexbuf }
   | white { lex_content s lexbuf }
   | '#' (['a'-'z']+ as key) white* ':' white* ([^'\n']+ as value)
-  { INFO { key; value } }
+  { INFO { Info.key; value } }
   | number as numstr white*
     { State.look_off s; NUMBER (int_of_string numstr) }
   | ([^'0'-'9'] [^'\n']*) as data

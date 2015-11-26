@@ -98,6 +98,25 @@ module Show(C : Config) = struct
       td.group_name { text-align:center; font-size:8pt;  }
     </style> >>
 
+  (*--- Markup for task names --------*)
+
+  let markup_of_taskname (s:string) =
+    let lexbuf = Lexing.from_string s in
+    try 
+      let results = Smarkup_parser.main Smarkup_lexer.token lexbuf in
+      
+      let rec html5_of_markup = function
+        | Markup.Bold l   -> <:html5< <strong>$list: List.map html5_of_markup l$</strong> >>
+        | Markup.Italic l -> <:html5< <i>$list: List.map html5_of_markup l$</i> >>
+        | Markup.Tt l     -> <:html5< <code>$list: List.map html5_of_markup l$</code> >>
+        | Markup.Text t   -> <:html5< $str: t$ >>
+      in
+    
+      List.map html5_of_markup results
+    with
+    | Smarkup_parser.Error -> [ <:html5< $str: s$ >>]
+
+
   (*----------------------------------*)
   
  
@@ -143,14 +162,12 @@ module Show(C : Config) = struct
 
   let rec rows_of_task ?(level = 0) ~accf ~id task =
     let row =
-      let name =
-        let info =
-          if level == 0 || Task.is_group task
-          then string_of_id id else "" in
-        info ^ task.Task.name
+      let info =
+        if level == 0 || Task.is_group task
+        then string_of_id id else ""
       and points = Task.points task |> string_of_int in
       let task_cells = 
-        [ <:html5< <td class="name">$str: name$</td> >>;
+        [ <:html5< <td class="name">$str: info$ $list: (markup_of_taskname task.Task.name)$</td> >>;
           <:html5< <td class="points">$str: points$</td> >> ]
       in
       let classes = class_for_task ~level task in

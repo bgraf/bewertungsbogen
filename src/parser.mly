@@ -2,7 +2,7 @@
 %token INDENT
 %token DEDENT
 %token <int> NUMBER
-%token <Lexer.info> INFO
+%token <Info.t> INFO
 %token <string> DATA
 
 %{
@@ -34,6 +34,6 @@ header:
 
 info:
 | info = INFO
-  { let { Lexer.key; value } = info in key, value }
+  { let { Info.key; value } = info in key, value }
 ;
 
