@@ -5,7 +5,7 @@
 |*   Author:                                                                 *|
 |*      Benjamin Graf (bgraf at uos de)                                      *|
 |*   Version:                                                                *|
-|*      2015-03-08 0.0.1-alpha                                               *|
+|*      2015-11-27 0.1.0                                                     *|
 |*                                                                           *|
 `*===========================================================================*)
 
@@ -138,7 +138,7 @@ let make_cmdline () =
     let doc = "Bewertungsbogen generator" in
     let man = [] in
     Term.(ret (pure main $ file_arg)),
-    Term.info "bewertungsbogen" ~man ~doc ~version:"0.0.1-alpha"
+    Term.info "bewertungsbogen" ~man ~doc ~version:"0.1.0"
   in
   cmd
 
