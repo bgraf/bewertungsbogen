@@ -111,7 +111,7 @@ let main file =
 
     let wk_stdin =
       Unix.open_process_out
-        ("wkhtmltopdf --encoding utf8 - " ^ output_filename) in
+        ("wkhtmltopdf --encoding utf8 -B 8 -T 8 -R 8 -L 8 - " ^ output_filename) in
 
     H.show ~f:(fun s -> Printf.fprintf wk_stdin "%s" s) tasks;
 

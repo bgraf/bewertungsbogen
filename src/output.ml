@@ -1,5 +1,6 @@
 
 open Batteries
+open Tyxml
 
 module type Config = sig
   val group_column_count : int
@@ -54,9 +55,6 @@ module Show(C : Config) = struct
   type t = Task.t
   type handler = string -> unit
 
-  module H = Html5.M
-  module P = Html5.P
-  module Html5 = Html5.M
   
   module Id = Make_Id(struct
     type t = int
@@ -68,9 +66,9 @@ module Show(C : Config) = struct
   (*----------------------------------*)
 
   let style = 
-    <:html5< <style>
+    <:html< <style>
       body {
-        font-family:tahoma;
+        font-family:Arial;
         font-size:8pt;
         background:#ffffff;
       }
@@ -106,15 +104,15 @@ module Show(C : Config) = struct
       let results = Smarkup_parser.main Smarkup_lexer.token lexbuf in
       
       let rec html5_of_markup = function
-        | Markup.Bold l   -> <:html5< <strong>$list: List.map html5_of_markup l$</strong> >>
-        | Markup.Italic l -> <:html5< <i>$list: List.map html5_of_markup l$</i> >>
-        | Markup.Tt l     -> <:html5< <code>$list: List.map html5_of_markup l$</code> >>
-        | Markup.Text t   -> <:html5< $str: t$ >>
+        | Markup.Bold l   -> <:html< <strong>$list: List.map html5_of_markup l$</strong> >>
+        | Markup.Italic l -> <:html< <i>$list: List.map html5_of_markup l$</i> >>
+        | Markup.Tt l     -> <:html< <code>$list: List.map html5_of_markup l$</code> >>
+        | Markup.Text t   -> <:html< $str: t$ >>
       in
     
       List.map html5_of_markup results
     with
-    | Smarkup_parser.Error -> [ <:html5< $str: s$ >>]
+    | Smarkup_parser.Error -> [ <:html< $str: s$ >>]
 
 
   (*----------------------------------*)
@@ -123,15 +121,15 @@ module Show(C : Config) = struct
   let group_cells =
     List.make
       C.group_column_count
-      (<:html5< <td></td> >>)
+      (<:html< <td></td> >>)
 
   let group_cells_for_task { Task.kind; } = match kind with
     | Task.Group _ ->
-      [ <:html5< <td colspan=$C.group_column_count |> string_of_int$></td> >> ]
+      [ <:html< <td colspan=$C.group_column_count |> string_of_int$></td> >> ]
     | _ -> group_cells
      
   let score_row ?(css="score") ?(info = "") () =
-    <:html5<
+    <:html<
       <tr class=$css$>
         <td colspan="2"><b>$str: info$</b></td>
         $list: group_cells$
@@ -139,7 +137,7 @@ module Show(C : Config) = struct
     >>
 
   let final_score_row ~score =
-    <:html5<
+    <:html<
       <tr class="score">
         <td><b>Gesamt</b></td>
         <td class="points">$str: score |> string_of_int$</td>
@@ -167,11 +165,11 @@ module Show(C : Config) = struct
         then string_of_id id else ""
       and points = Task.points task |> string_of_int in
       let task_cells = 
-        [ <:html5< <td class="name">$str: info$ $list: (markup_of_taskname task.Task.name)$</td> >>;
-          <:html5< <td class="points">$str: points$</td> >> ]
+        [ <:html< <td class="name">$str: info$ $list: (markup_of_taskname task.Task.name)$</td> >>;
+          <:html< <td class="points">$str: points$</td> >> ]
       in
       let classes = class_for_task ~level task in
-      <:html5< <tr class=$classes$>$list:task_cells$ $list:group_cells_for_task task$</tr> >>
+      <:html< <tr class=$classes$>$list:task_cells$ $list:group_cells_for_task task$</tr> >>
     in
     
     let () = accf row in (* accumulate row *)
@@ -209,9 +207,9 @@ module Show(C : Config) = struct
     let group_name_cells =
       List.init
         C.group_column_count
-        (fun i -> <:html5< <td class="group_name">$str: groupname_of_int (i+1)$</td> >>)
+        (fun i -> <:html< <td class="group_name">$str: groupname_of_int (i+1)$</td> >>)
     in
-    <:html5<
+    <:html<
       <tr class="heading">
         <td colspan="2">$str: C.title$</td>
         $list: group_name_cells$
@@ -224,7 +222,7 @@ module Show(C : Config) = struct
   let show ~f tasks =
     let rows = rows_of_tasks tasks in
 
-    let doc = <:html5<
+    let doc = <:html<
       <html>
         <head>$style$</head>
         <body>
@@ -237,7 +235,8 @@ module Show(C : Config) = struct
       </html>
     >> in
 
-    P.print ~output:f doc
+    let s = Format.asprintf "%a" (Html.pp ()) doc in
+    f s
 
 end
 
